@@ -5,33 +5,46 @@ CSC061
 """
 
                              #~User input~#
+
+# Prompts user to input gross salary and tax code
 employeeGross = input("Enter Employee's Gross Salary: ")
 employeeTaxCode = input("Enter Employee's 4-digit Tax Code: ").upper()
 
                             #~Calculations~#
 class Employee():
     """This class takes the user input and performs all the necessary
-    calculations upon initialisation."""
+    calculations upon initialisation. The results of these
+    calculations are then stored as <self.properties> in the object after
+    initialisation. They can then easily be used in further calculations
+    or outputs"""
     def __init__(self, gross, taxCode):
-        self.gross = int(gross)
+        self.gross = float(gross)
         self.taxCode = taxCode
+        
         # Employee pension contribution of 5%:
         self.pensionEmployee = self.gross * 0.05
+        
         # Employer pension contribution of 7.5%:
         self.pensionEmployer = self.gross * 0.075
+        
         # Total pension contribution:
         self.pensionTotal = self.pensionEmployee + self.pensionEmployer
+        
         # Employee's gross salary after pension contribution:
         self.grossMinusPension = self.gross - self.pensionEmployee
+        
         # Employee's personal tax allowance:
         self.allowance = self.calcAllowance()
+        
         # Taxable income
         self.taxableIncome = self.calcTaxableIncome()
+        
         # Tax deducted
         self.taxArray = self.calcTax()
         self.lowerTax = self.taxArray[0]
         self.upperTax = self.taxArray[1]
         self.totalTax = self.lowerTax + self.upperTax
+        
         # Net salary
         self.netSalary = self.grossMinusPension - self.totalTax
 
@@ -55,29 +68,27 @@ class Employee():
     def calcTax(self):
         # Returns array: [0] = lower tax paid, [1] = higher tax paid
         lowerBand = 40000
-        if self.taxableIncome == 0:
-            return [0, 0]
-
+        if self.taxableIncome == 0: # Returns 0 upper and lower tax if no taxable income 
+            return [0, 0]   
         elif self.taxableIncome <= lowerBand:
             return [(self.taxableIncome * 0.09), 0]
         else:
             upperBand = (self.taxableIncome - lowerBand) * 0.49
             return [(lowerBand * 0.09), upperBand]
 
-# Initialisation of Employee class for calculations of user inputs
+# Initialisation of Employee class to calculations user inputs
 employee = Employee(employeeGross, employeeTaxCode)
 
 
                                 #~Output~#
 
+# Variable used in the print statements to format the table
 border = "-" * 79                                    # Solid border
 breakLine = "- " * int((78/2)) + "-"                 # Dashed border
 allignmentF = "| {0:<55s}|{1:>18.2f}{2:>3s}\n{3}"    # Alignment for floats
 allignmentS= "| {0:<55s}|{1:>18s}{2:>3s}\n{3}"       # Alignment for strings
 
-# In hindsight I could have created a dictionary and iterated through that
-# to print all of the values with their associated strings.
-
+# Print statements
 print(border + "\n" + allignmentF
       .format("Gross Salary:",
               employee.gross, "|",
@@ -137,22 +148,4 @@ print(allignmentF
       .format("Net Income:",
               employee.netSalary, "|",
               border))
-
-#~Debugging~#
-print("\n\n\n~~~Debugging~~~")
-print("~gross~")
-print(employeeGross)
-print("~tax code~")
-print(employeeTaxCode)
-print("~pension employee + employer~")
-print(employee.pensionEmployee)
-print(employee.pensionEmployer)
-print("~allowance + taxable income~")
-print(employee.allowance)
-print(employee.taxableIncome)
-print("~tax array, upper, lower, total~")
-print(employee.taxArray)
-print(employee.upperTax)
-print(employee.lowerTax)
-print(employee.totalTax)
 
